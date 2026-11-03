@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Paloma CERCA triste">
+  <title>Paloma CERCA triste</title>
+  <g id="sticker-outline" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="22" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M196 318 L86 344 Q66 350 70 370 Q74 390 94 392 L204 378 Z" transform="rotate(10 200 345)"/>
+    <path d="M288 412 V466 M288 466 L310 468 M288 466 L304 458 M322 412 V472 M322 472 L350 474 M322 472 L344 462 M322 472 L312 476" fill="none" stroke-width="25"/>
+    <path d="M304 158 C298 206 270 232 232 256 C192 281 168 312 170 342 C172 396 224 428 290 426 C360 424 404 380 406 320 C407 268 394 226 394 176 Z"/>
+    <g transform="rotate(16 348 205) translate(350 142) scale(1.16) translate(-350 -148)"><circle cx="350" cy="148" r="54"/><path d="M398 136 L444 154 L400 166 Z"/></g>
+    <path d="M306 256 C356 262 380 312 360 356 C340 398 272 410 202 396 L132 372 C182 362 228 334 252 294 C266 270 284 256 306 256 Z" transform="rotate(7 306 262)"/>
+    <path d="M250 96 C243.7 105.9 241.0 112.2 241.0 115.8 C241.0 121.2 245.5 124.8 250 124.8 C254.5 124.8 259.0 121.2 259.0 115.8 C259.0 112.2 256.3 105.9 250 96 Z M226 132 C221.45 139.15 219.5 143.7 219.5 146.3 C219.5 150.2 222.75 152.8 226 152.8 C229.25 152.8 232.5 150.2 232.5 146.3 C232.5 143.7 230.55 139.15 226 132 Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="22" stroke-linejoin="round"/>
+  </g>
+  <defs>
+    <clipPath id="clip-body"><path d="M304 158 C298 206 270 232 232 256 C192 281 168 312 170 342 C172 396 224 428 290 426 C360 424 404 380 406 320 C407 268 394 226 394 176 Z"/></clipPath>
+    <clipPath id="clip-wing"><path d="M306 256 C356 262 380 312 360 356 C340 398 272 410 202 396 L132 372 C182 362 228 334 252 294 C266 270 284 256 306 256 Z"/></clipPath>
+    <clipPath id="clip-tail"><path d="M196 318 L86 344 Q66 350 70 370 Q74 390 94 392 L204 378 Z"/></clipPath>
+  </defs>
+  <g id="legs" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="9">
+    <path d="M288 412 V466 M288 466 L310 468 M288 466 L304 458" stroke="#C9706A"/>
+    <path d="M322 412 V472 M322 472 L350 474 M322 472 L344 462 M322 472 L312 476" stroke="#E58C7F"/>
+    <rect x="315" y="436" width="14" height="11" rx="3" fill="#D63A3F" stroke="none"/>
+  </g>
+  <g id="tail" transform="rotate(10 200 345)">
+    <path d="M196 318 L86 344 Q66 350 70 370 Q74 390 94 392 L204 378 Z" fill="#857DA5"/>
+    <rect x="50" y="320" width="56" height="90" fill="#4B4568" clip-path="url(#clip-tail)"/>
+  </g>
+  <g id="body">
+    <path d="M304 158 C298 206 270 232 232 256 C192 281 168 312 170 342 C172 396 224 428 290 426 C360 424 404 380 406 320 C407 268 394 226 394 176 Z" fill="#9A93B8"/>
+    <g clip-path="url(#clip-body)">
+      <ellipse cx="296" cy="446" rx="140" ry="52" fill="#857DA5"/>
+      <path d="M302 150 C298 200 284 226 260 246 C300 264 362 270 404 254 C398 228 394 204 394 168 Z" transform="translate(0 24)" fill="#E9A6AA"/>
+      <path d="M302 150 C298 200 284 226 260 246 C300 264 362 270 404 254 C398 228 394 204 394 168 Z" transform="translate(0 12)" fill="#8DB07A"/>
+      <path d="M302 150 C298 200 284 226 260 246 C300 264 362 270 404 254 C398 228 394 204 394 168 Z" fill="#6C658F"/>
+    </g>
+  </g>
+  <g id="wing" transform="rotate(7 306 262)">
+    <path d="M306 256 C356 262 380 312 360 356 C340 398 272 410 202 396 L132 372 C182 362 228 334 252 294 C266 270 284 256 306 256 Z" fill="#BCB6D3"/>
+    <g clip-path="url(#clip-wing)">
+      <path d="M100 330 L198 330 L214 420 L100 420 Z" fill="#6C658F"/>
+      <path d="M262 292 Q246 346 262 404 M226 316 Q210 360 226 404" fill="none"
+            stroke="#4B4568" stroke-width="13" stroke-linecap="round"/>
+    </g>
+  </g>
+  <g id="head" transform="rotate(16 348 205) translate(350 142) scale(1.16) translate(-350 -148)">
+    <circle cx="350" cy="148" r="54" fill="#6C658F"/>
+    <path d="M398 136 L444 154 L400 166 Z" fill="#2B2638" stroke-linejoin="round"/>
+    <ellipse cx="403" cy="137" rx="10" ry="7" fill="#F4EEE1"/>
+    <circle cx="362" cy="138" r="17" fill="#F2C25A"/><circle cx="362" cy="143" r="10" fill="#1F1B1A"/><circle cx="366" cy="139" r="3.6" fill="#FFFFFF"/><circle cx="358" cy="148" r="1.8" fill="#FFFFFF"/><path d="M347 151 Q362 160 377 151" fill="none" stroke="#CFE1F3" stroke-width="5" stroke-linecap="round"/><path d="M348 118 Q362 114 374 98" fill="none" stroke="#1F1B1A" stroke-width="5" stroke-linecap="round"/><path d="M354 160 C348.4 168.8 346.0 174.4 346.0 177.6 C346.0 182.4 350.0 185.6 354 185.6 C358.0 185.6 362.0 182.4 362.0 177.6 C362.0 174.4 359.6 168.8 354 160 Z" fill="#CFE1F3" stroke="#FFFFFF" stroke-width="4"/>
+  </g>
+  <g id="reaction"><path d="M250 96 C243.7 105.9 241.0 112.2 241.0 115.8 C241.0 121.2 245.5 124.8 250 124.8 C254.5 124.8 259.0 121.2 259.0 115.8 C259.0 112.2 256.3 105.9 250 96 Z M226 132 C221.45 139.15 219.5 143.7 219.5 146.3 C219.5 150.2 222.75 152.8 226 152.8 C229.25 152.8 232.5 150.2 232.5 146.3 C232.5 143.7 230.55 139.15 226 132 Z" fill="#CFE1F3"/></g>
+</svg>

@@ -1,7 +1,7 @@
 export { BRAND_NAME } from './brand'
 
 /**
- * Jotform. Por defecto, la app "Cerca Wishlist" (código de inserción oficial:
+ * Jotform. Por defecto, la app "Cerca Waiting List" (código de inserción oficial:
  * iframe a app.jotform.com/263007192678866?appEmbedded=1). Para cambiarla sin
  * tocar código, define VITE_JOTFORM_URL en `.env` (ver `.env.example`).
  * Si la URL queda vacía o no es https, los botones abren un aviso de

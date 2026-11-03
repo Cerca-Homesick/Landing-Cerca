@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { track } from '../analytics'
 import { JOTFORM_DIRECT_URL, JOTFORM_URL, SIGNUP_MESSAGE } from '../config'
 import { useCopy, useLang } from '../i18n'
+import { Toast } from './Toast'
 
 type OpenWaitlist = (trigger: HTMLElement, location: string) => void
 
@@ -11,7 +12,6 @@ type ProviderProps = { children: ReactNode; initialConfirmed?: boolean }
 
 export function WaitlistProvider({ children, initialConfirmed = false }: ProviderProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -33,11 +33,11 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
   const close = useCallback(() => dialogRef.current?.close(), [])
 
   // Inscripción confirmada: Jotform redirige su página de agradecimiento a esta
-  // misma web con ?registro=confirmado; esa página, dentro del iframe, avisa aquí.
+  // misma web con ?registro=confirmado; esa página avisa aquí. Va en un iframe
+  // anidado dentro del de la app de Jotform, así que solo se comprueba el origen.
   useEffect(() => {
     function onMessage(event: MessageEvent) {
       if (event.origin !== window.location.origin) return
-      if (event.source !== iframeRef.current?.contentWindow) return
       if (event.data?.type !== SIGNUP_MESSAGE) return
       track('waitlist_signup_confirmed', { via: 'modal' })
       setConfirmed(true)
@@ -79,11 +79,11 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
 
           {JOTFORM_URL ? (
             <>
+              {t.formNote && <p className="waitlist__note">{t.formNote}</p>}
               <div className="waitlist__frame" data-loaded={loaded}>
                 {!loaded && <p className="waitlist__loading">{t.loading}</p>}
                 {isOpen && (
                   <iframe
-                    ref={iframeRef}
                     src={JOTFORM_URL}
                     title={t.frameTitle}
                     allow="geolocation; microphone; camera; fullscreen"
@@ -122,16 +122,9 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
 export function SignupThanks({ onDismiss }: { onDismiss: () => void }) {
   const t = useCopy().waitlist
   return (
-    <div className="thanks" role="status">
-      <p>
-        <strong>{t.thanksLead}</strong> {t.thanks}
-      </p>
-      <button type="button" className="icon-btn" onClick={onDismiss} aria-label={t.dismiss}>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" />
-        </svg>
-      </button>
-    </div>
+    <Toast pose="happy" dismissLabel={t.dismiss} onDismiss={onDismiss}>
+      <strong>{t.thanksLead}</strong> {t.thanks}
+    </Toast>
   )
 }
 

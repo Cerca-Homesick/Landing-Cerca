@@ -1,20 +1,21 @@
-import type { Tone } from '../content'
-import { Art, type ArtName } from './Art'
+import type { CSSProperties, HTMLAttributes } from 'react'
+import { ART, type ArtName, type Tone } from '../content'
 
-type StampProps = {
+type StampProps = HTMLAttributes<HTMLSpanElement> & {
   art: ArtName
   tone?: Tone
-  image?: string
-  /** Texto alternativo cuando `image` es una foto real. */
+  tilt?: number
+  /** Vacío cuando la estampilla es decorativa. */
   alt?: string
 }
 
-/** Fotografía con borde de estampilla. Sin `image`, muestra la ilustración provisional. */
-export function Stamp({ art, tone = 'butter', image, alt = '' }: StampProps) {
+/** Toda foto de CERCA es una estampilla: borde perforado, marco de un tono e imagen 4:5. */
+export function Stamp({ art, tone = 'butter', tilt, alt = '', className = '', style, ...rest }: StampProps) {
+  const rotation = tilt === undefined ? undefined : ({ '--r': `${tilt}deg` } as CSSProperties)
   return (
-    <span className={`stamp stamp--${tone}`}>
+    <span className={`stamp stamp--${tone} ${className}`} style={{ ...rotation, ...style }} {...rest}>
       <span className="stamp__paper">
-        {image ? <img src={image} alt={alt} loading="lazy" decoding="async" /> : <Art name={art} />}
+        <img src={ART[art]} alt={alt} decoding="async" />
       </span>
     </span>
   )

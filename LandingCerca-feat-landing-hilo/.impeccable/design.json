@@ -1,0 +1,573 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-03T10:10:10.827Z",
+  "title": "Design System: CERCA landing",
+  "extensions": {
+    "colorMeta": {
+      "sky": {
+        "role": "primary",
+        "displayName": "Fresh Sky",
+        "canonical": "#4ea5d9",
+        "tonalRamp": [
+          "#000d19",
+          "#00283e",
+          "#014769",
+          "#006997",
+          "#318bbe",
+          "#58afe3",
+          "#8ed2ff",
+          "#e0f1fe"
+        ]
+      },
+      "deep": {
+        "role": "primary",
+        "displayName": "Deep Space Blue",
+        "canonical": "#12263a",
+        "tonalRamp": [
+          "#010c1a",
+          "#12263a",
+          "#2f445a",
+          "#4d647b",
+          "#6e859d",
+          "#90a8c1",
+          "#b6cce2",
+          "#e6f0fb"
+        ]
+      },
+      "tomato": {
+        "role": "primary",
+        "displayName": "Tomato Jam",
+        "canonical": "#bb4430",
+        "tonalRamp": [
+          "#210000",
+          "#4c0400",
+          "#7d0f00",
+          "#a8321f",
+          "#cf5742",
+          "#f87b64",
+          "#ffb4a4",
+          "#ffe9e4"
+        ]
+      },
+      "blush": {
+        "role": "secondary",
+        "displayName": "Powder Blush",
+        "canonical": "#fcb5b5",
+        "tonalRamp": [
+          "#200002",
+          "#450e14",
+          "#672d30",
+          "#8a4d4e",
+          "#af6e6f",
+          "#d49090",
+          "#f4b7b7",
+          "#fee9e8"
+        ]
+      },
+      "butter": {
+        "role": "secondary",
+        "displayName": "Butter",
+        "canonical": "#f3ca5e",
+        "tonalRamp": [
+          "#110a00",
+          "#302300",
+          "#533f00",
+          "#785d03",
+          "#a17d01",
+          "#c79f2c",
+          "#e8c56d",
+          "#fdedc6"
+        ]
+      },
+      "sage": {
+        "role": "secondary",
+        "displayName": "Sage",
+        "canonical": "#a6c99b",
+        "tonalRamp": [
+          "#011000",
+          "#102d05",
+          "#2d4b23",
+          "#4c6b42",
+          "#6c8d62",
+          "#8eb184",
+          "#b5d4ac",
+          "#e5f4e1"
+        ]
+      },
+      "beige": {
+        "role": "neutral",
+        "displayName": "Paper Beige",
+        "canonical": "#eef5db",
+        "tonalRamp": [
+          "#0a0d02",
+          "#232814",
+          "#404530",
+          "#5f644e",
+          "#80866e",
+          "#a2a990",
+          "#c6ccb7",
+          "#edf0e6"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1e1a17",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#f4ead5",
+        "tonalRamp": [
+          "#100a02",
+          "#2c2414",
+          "#494130",
+          "#69604e",
+          "#8a816e",
+          "#ada490",
+          "#d1c8b7",
+          "#f2eee6"
+        ]
+      },
+      "cream-deep": {
+        "role": "neutral",
+        "displayName": "Cream Deep",
+        "canonical": "#e8dcc2",
+        "tonalRamp": [
+          "#110a00",
+          "#2d240f",
+          "#4b412b",
+          "#6b6049",
+          "#8c8169",
+          "#afa48b",
+          "#d2c8b2",
+          "#f3eee4"
+        ]
+      },
+      "cream-hover": {
+        "role": "neutral",
+        "displayName": "Cream Hover",
+        "canonical": "#e9dcc0",
+        "tonalRamp": [
+          "#110a00",
+          "#2e240c",
+          "#4b4129",
+          "#6b6047",
+          "#8d8167",
+          "#b0a489",
+          "#d3c8b1",
+          "#f3eee3"
+        ]
+      },
+      "ink-hover": {
+        "role": "neutral",
+        "displayName": "Ink Hover",
+        "canonical": "#3a332e",
+        "tonalRamp": [
+          "#0f0a07",
+          "#2a241f",
+          "#48403b",
+          "#67605a",
+          "#89817b",
+          "#aca39d",
+          "#cfc7c2",
+          "#f1eeeb"
+        ]
+      },
+      "ink-82": {
+        "role": "neutral",
+        "displayName": "Ink 82",
+        "canonical": "#1e1a17d1",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "ink-78": {
+        "role": "neutral",
+        "displayName": "Ink 78",
+        "canonical": "#1e1a17c7",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "ink-75": {
+        "role": "neutral",
+        "displayName": "Ink 75",
+        "canonical": "#1e1a17bf",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#1e1a1738",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Divider",
+        "canonical": "#1e1a1724",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "tint-hover": {
+        "role": "neutral",
+        "displayName": "Tint Hover",
+        "canonical": "#1e1a171a",
+        "tonalRamp": [
+          "#0d0a08",
+          "#282421",
+          "#46413e",
+          "#65605c",
+          "#86817d",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f0eeec"
+        ]
+      },
+      "env-back": {
+        "role": "neutral",
+        "displayName": "Envelope Back",
+        "canonical": "#e2eac8",
+        "tonalRamp": [
+          "#0a0d00",
+          "#23280c",
+          "#404529",
+          "#5f6547",
+          "#7f8667",
+          "#a2a989",
+          "#c6cdb1",
+          "#edf0e3"
+        ]
+      },
+      "env-flap": {
+        "role": "neutral",
+        "displayName": "Envelope Flap",
+        "canonical": "#dde7c2",
+        "tonalRamp": [
+          "#090d00",
+          "#222809",
+          "#3f4627",
+          "#5d6645",
+          "#7e8765",
+          "#a1aa87",
+          "#c5ceaf",
+          "#ecf1e2"
+        ]
+      },
+      "backdrop": {
+        "role": "neutral",
+        "displayName": "Backdrop",
+        "canonical": "#12263a99",
+        "tonalRamp": [
+          "#010c1a",
+          "#12263a",
+          "#2f445a",
+          "#4d647b",
+          "#6e859d",
+          "#90a8c1",
+          "#b6cce2",
+          "#e6f0fb"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The hero question only. Fluid: clamp(2.6rem, 1.2rem + 3.9vw, 4.6rem)."
+      },
+      "scene-line": {
+        "displayName": "Scene Line",
+        "purpose": "The one serif sentence that opens a scene, italic. Fluid: clamp(2.1rem, 1.5rem + 2.2vw, 3.4rem)."
+      },
+      "hero-turn": {
+        "displayName": "Hero Turn",
+        "purpose": "Second half of the hero headline, italic. Fluid: clamp(1.7rem, 1.1rem + 2vw, 2.7rem)."
+      },
+      "face-title": {
+        "displayName": "Face Title",
+        "purpose": "Letter page titles, uppercase. Fluid: clamp(1.3rem, 0.9rem + 1.1vw, 2rem)."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "CERCA, always capitals, with the tomato underline."
+      },
+      "dialog-title": {
+        "displayName": "Dialog Title",
+        "purpose": "The waitlist dialog title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Notes, hints and the footer."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Primary button label."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "City tags; the time after the city is weight 400."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Uppercase album day ranges. A data label, never a kicker."
+      },
+      "hand": {
+        "displayName": "Hand",
+        "purpose": "Stamp quotes, labels and notes, tilted."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-1",
+        "value": "0 1px 2px #1e1a171f, 0 8px 18px -8px #1e1a1759",
+        "purpose": "Things resting: primary button, tags, selected tab."
+      },
+      {
+        "name": "shadow-2",
+        "value": "0 2px 3px #1e1a171a, 0 22px 44px -18px #1e1a1773, 0 50px 90px -40px #1e1a174d",
+        "purpose": "Paper floating in the air: envelope, letter, label, album, ticket, dialog, toast."
+      },
+      {
+        "name": "stamp",
+        "value": "drop-shadow(0 1px 1px #1e1a172e) drop-shadow(0 14px 16px #1e1a1738)",
+        "purpose": "Follows the perforated stamp silhouette (filter)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Most transitions."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Flap (0.7s), letter flip (0.85s), stamp flight (0.7s), phone envelope hop (0.9s)."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "header-minimal",
+        "value": "359px"
+      },
+      {
+        "name": "header-compact",
+        "value": "430px"
+      },
+      {
+        "name": "dialog-full",
+        "value": "600px"
+      },
+      {
+        "name": "gutter-wide",
+        "value": "761px"
+      },
+      {
+        "name": "flight",
+        "value": "900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The waitlist action along the flight: hero, seal scene and ticket.",
+      "html": "<button class=\"ds-btn-primary\">Acércame</button>",
+      "css": ".ds-btn-primary { min-height: 56px; padding: 0 30px; border: 0; border-radius: var(--radius-pill); background: var(--ink); color: var(--beige); font: 700 1.02rem/1.1 var(--sans); box-shadow: var(--shadow-1); cursor: pointer; transition: transform .16s var(--ease-out), background-color .2s; } .ds-btn-primary:hover { background: var(--ink-hover); } .ds-btn-primary:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; } .ds-btn-primary:active { transform: scale(.97); }"
+    },
+    {
+      "name": "Small Button",
+      "kind": "button",
+      "refersTo": "button-small",
+      "description": "Outlined header action.",
+      "html": "<button class=\"ds-btn-small\">Lista de espera</button>",
+      "css": ".ds-btn-small { min-height: 42px; padding: 0 18px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink); font: 700 .92rem/1.1 var(--sans); box-shadow: inset 0 0 0 2px var(--ink); cursor: pointer; transition: transform .16s var(--ease-out), background-color .2s; } .ds-btn-small:hover { background: var(--tint-hover); } .ds-btn-small:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; } .ds-btn-small:active { transform: scale(.97); }"
+    },
+    {
+      "name": "Language Switch",
+      "kind": "nav",
+      "description": "The ES/EN toggle in the header.",
+      "html": "<div class=\"ds-lang\"><button aria-pressed=\"true\">ES</button><button aria-pressed=\"false\">EN</button></div>",
+      "css": ".ds-lang { display: inline-flex; padding: 3px; border-radius: var(--radius-pill); box-shadow: inset 0 0 0 2px var(--ink); } .ds-lang button { min-width: 40px; min-height: 36px; padding: 0 10px; border: 0; border-radius: var(--radius-pill); background: none; color: var(--ink); font: 700 .82rem/1 var(--sans); letter-spacing: .06em; cursor: pointer; transition: background-color .16s, color .16s; } .ds-lang button[aria-pressed='true'] { background: var(--ink); color: var(--beige); } .ds-lang button[aria-pressed='false']:hover { background: var(--tint-hover); } .ds-lang button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }"
+    },
+    {
+      "name": "Letter Tabs",
+      "kind": "chip",
+      "refersTo": "tab-selected",
+      "description": "Phone only: switches between the two pages of the letter.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab\" aria-selected=\"true\">Su página</button><button class=\"ds-tab\" aria-selected=\"false\">Tu página</button></div>",
+      "css": ".ds-tabs { display: inline-flex; padding: 4px; border-radius: var(--radius-pill); background: var(--cream-deep); } .ds-tab { min-height: 44px; padding: 0 18px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink-75); font: 700 .98rem/1 var(--sans); cursor: pointer; transition: background-color .2s, color .2s, box-shadow .2s, transform .16s var(--ease-out); } .ds-tab[aria-selected='true'] { background: var(--beige); color: var(--ink); box-shadow: var(--shadow-1); } .ds-tab:hover { color: var(--ink); } .ds-tab:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; } .ds-tab:active { transform: scale(.97); }"
+    },
+    {
+      "name": "City Tag",
+      "kind": "chip",
+      "refersTo": "tag-near",
+      "description": "A city and its local time on a tilted paper label.",
+      "html": "<p class=\"ds-tag\">Monterrey <span>1:20 p. m.</span></p>",
+      "css": ".ds-tag { display: inline-block; margin: 0; padding: 6px 12px 7px; background: var(--butter); color: var(--ink); font-family: var(--sans); font-size: .85rem; font-weight: 700; line-height: 1.2; white-space: nowrap; box-shadow: var(--shadow-1); rotate: -3deg; } .ds-tag span { margin-left: 4px; font-weight: 400; }"
+    },
+    {
+      "name": "Stamp",
+      "kind": "custom",
+      "description": "Every picture on the page: perforated paper, a tone frame and a 4:5 image.",
+      "html": "<span class=\"ds-stamp\"><span class=\"ds-stamp__paper\"><svg viewBox=\"0 0 80 100\" aria-hidden=\"true\"><rect width=\"80\" height=\"100\" fill=\"#f3ca5e\"/><circle cx=\"40\" cy=\"50\" r=\"20\" fill=\"#fcb5b5\"/></svg></span></span>",
+      "css": ".ds-stamp { display: inline-block; width: 150px; filter: drop-shadow(0 1px 1px #1e1a172e) drop-shadow(0 14px 16px #1e1a1738); rotate: -3deg; } .ds-stamp__paper { --hole: 5px; display: block; padding: calc(2 * var(--hole)); background: radial-gradient(var(--hole), #0000 98%, var(--beige)) round calc(-1.5 * var(--hole)) calc(-1.5 * var(--hole)) / calc(3 * var(--hole)) calc(3 * var(--hole)), linear-gradient(var(--beige) 0 0) no-repeat 50% / calc(100% - 3 * var(--hole)) calc(100% - 3 * var(--hole)); } .ds-stamp svg { display: block; width: 100%; height: auto; box-shadow: 0 0 0 3px var(--butter); }"
+    },
+    {
+      "name": "Traveling Envelope",
+      "kind": "custom",
+      "refersTo": "letter-face",
+      "description": "The one carried object, shown sealed. The landing page moves it along the route.",
+      "html": "<div class=\"ds-env\"><div class=\"ds-env__back\"></div><div class=\"ds-env__front\"></div><div class=\"ds-env__flap\"></div><span class=\"ds-env__seal\"></span><div class=\"ds-env__address\"><b>Para: Valeria</b><span>Nápoles, Italia</span></div><div class=\"ds-env__airmail\"></div></div>",
+      "css": ".ds-env { position: relative; width: 340px; aspect-ratio: 460 / 330; rotate: -6deg; color: var(--ink); font-family: var(--sans); } .ds-env__back, .ds-env__front, .ds-env__flap { position: absolute; inset: 0; } .ds-env__back { background: var(--env-back); box-shadow: var(--shadow-2); } .ds-env__front { z-index: 3; background: var(--beige); clip-path: polygon(0 30%, 50% 64%, 100% 30%, 100% 100%, 0 100%); } .ds-env__flap { z-index: 4; height: 62%; background: var(--env-flap); clip-path: polygon(0 0, 100% 0, 50% 100%); } .ds-env__seal { position: absolute; z-index: 6; left: 50%; top: 62%; width: 7.4%; aspect-ratio: 1; translate: -50% -50%; border-radius: var(--radius-round); background: var(--tomato); box-shadow: 0 2px 4px #1e1a174d; } .ds-env__address { position: absolute; z-index: 5; left: 8%; bottom: 13%; display: grid; gap: 2px; font-size: .8rem; line-height: 1.25; } .ds-env__airmail { position: absolute; inset: auto 0 0 0; z-index: 5; height: 10px; background: var(--airmail); }"
+    },
+    {
+      "name": "Open Letter",
+      "kind": "card",
+      "refersTo": "letter-face",
+      "description": "Desktop: one airmail sheet with two pages and a hairline fold.",
+      "html": "<div class=\"ds-letter\"><article><p class=\"ds-letter__title\">Página de Valeria</p></article><article><p class=\"ds-letter__title\">Tu página</p></article></div>",
+      "css": ".ds-letter { display: grid; grid-template-columns: 1fr 1fr; width: 520px; max-width: 100%; border: 11px solid #0000; border-image: var(--airmail) 11; background: var(--beige) padding-box; box-shadow: var(--shadow-2); } .ds-letter article { min-height: 180px; padding: 24px; } .ds-letter article + article { border-left: 1.5px solid var(--hairline); } .ds-letter__title { margin: 0; font-family: var(--display); font-size: 1.6rem; line-height: .95; letter-spacing: -.02em; text-transform: uppercase; color: var(--deep); text-shadow: 3px 3px 0 var(--blush); }"
+    },
+    {
+      "name": "Ticket",
+      "kind": "card",
+      "refersTo": "ticket",
+      "description": "The closing card: one serif sentence and one primary button.",
+      "html": "<div class=\"ds-ticket\"><p class=\"ds-ticket__line\">Lo próximo que compartas puede empezar aquí.</p></div>",
+      "css": ".ds-ticket { display: grid; justify-items: center; max-width: 480px; padding: 48px 32px; border: 11px solid #0000; border-image: var(--airmail) 11; background: var(--beige) padding-box; box-shadow: var(--shadow-2); text-align: center; rotate: -1.5deg; } .ds-ticket__line { margin: 0; max-width: 18ch; font-family: var(--serif); font-style: italic; font-size: 2.4rem; line-height: 1.04; color: var(--deep); }"
+    },
+    {
+      "name": "Scene Line",
+      "kind": "custom",
+      "description": "The one sentence that opens a scene, on flat sky.",
+      "html": "<div class=\"ds-scene\"><h2>Una carta, dos páginas.</h2></div>",
+      "css": ".ds-scene { padding: 40px; background: var(--sky); } .ds-scene h2 { margin: 0; max-width: 22ch; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(2.1rem, 1.5rem + 2.2vw, 3.4rem); line-height: 1.04; color: var(--deep); text-wrap: balance; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Air Between Two People",
+    "overview": "The whole page is the air between one person and another, from one person's afternoon to the other's night. There is one sky, one dashed route and one envelope, and the envelope travels with the reader from Monterrey to Nápoles. Every object on the way is a real CERCA object doing its job: stamps fly into the envelope, the letter shows both pages, the flap closes and the seal comes down, the pigeon lands, and what arrived fills the album.\n\nDensity is deliberately low. Each scene carries about one sentence, and the air around it is as much a part of the design as the objects. It should feel handmade, warm and a little playful, never techy.",
+    "keyCharacteristics": [
+      "One unbroken ground from top to bottom, darkening once and never returning.",
+      "One sentence per scene, in the serif voice.",
+      "One envelope that changes state as it travels the route.",
+      "Paper objects sit tilted in the air, with no cards, bands or section furniture around them.",
+      "Phones get the same story through reserved parking gaps. Desktop gets the letter open across two pages."
+    ],
+    "rules": [
+      {
+        "name": "The One Sky Rule",
+        "body": "The page has one ground. Sky runs flat through the first scenes, then a single fade carries it through three intermediate blues (#2f7eb0, #215878, #183b55) into `deep`, reaching it at 78% of the fade's height, behind the landed envelope. Everything below is flat `deep`. No second fade, no colour band, no return to sky.",
+        "section": "colors"
+      },
+      {
+        "name": "The Nothing Loose on the Fade Rule",
+        "body": "Loose text sits on flat sky or flat night. Inside the fade, words ride on paper: the distance is on a luggage label, the city is on a tag. The handwritten arrival note sits where the ground is already flat.",
+        "section": "colors"
+      },
+      {
+        "name": "The Night Text Rule",
+        "body": "On `deep`, loose text is beige. The serif sentence switches from `deep` to beige when it crosses into the night, and goes back to `deep` when it sits on paper.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Sentence Rule",
+        "body": "A scene speaks once, in the serif voice, with a single short sentence as its heading. No title with a subtitle, no step numbers, no feature paragraph under it. If a scene needs a second sentence, the object should be showing it instead.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Shout Rule",
+        "body": "The two-halves headline happens once, in the hero. After that, display type labels objects (a month, a distance, a page title). It does not head scenes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Parking Gap Rule",
+        "body": "On a phone every scene the envelope stops in reserves its own empty space for it: up to 300px wide (72vw) at a 460:400 ratio, enough for the envelope and the pigeon above it. The envelope flies to the last gap that has entered 80% of the viewport height. Never lay a phone-width carried object over content.",
+        "section": "layout"
+      },
+      {
+        "name": "The Clear Air Rule",
+        "body": "The carried envelope never covers a scene's content, and the route always runs behind it. New scenes declare a side and keep its opposite free.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Lifts Rule",
+        "body": "Clouds, the route line and loose text cast no shadow; they belong to the sky. Paper objects are what lift off it.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do read `CERCA-DESIGN-SYSTEM.md` first and use its token names, objects, pose meanings and bilingual voice.",
+      "Do open each new scene with one serif sentence as its heading, and let an object carry the rest.",
+      "Do keep the ground flat `deep` from the arrival on, and set loose text there in beige.",
+      "Do reserve a parking gap in any phone scene where the envelope stops.",
+      "Do declare a side for each desktop scene and leave the opposite rail clear for the route and envelope.",
+      "Do use the stock pigeon files as they come.",
+      "Do label sample people, places and times where they appear.",
+      "Do keep the reduced-motion version complete: the envelope stays still, and every state is shown in place."
+    ],
+    "donts": [
+      "Don't add bands, terrain edges, section titles, subheadings or numbered steps to this page.",
+      "Don't repeat the two-halves headline below the hero.",
+      "Don't edit, redraw or recolour the pigeon art, or add a pigeon as decoration.",
+      "Don't use a second envelope in flight: there is one carried object, and the landed copy replaces it on arrival.",
+      "Don't set loose text directly on the fade between sky and night.",
+      "Don't load fonts from third parties on this page.",
+      "Don't extend the letter title's hard blush offset to any other element; it is the brand's print detail for letter page titles only.",
+      "Don't inherit this build's unreconciled departures from the brand file: route at 3.5px with 2/11 dashes (brand 3px, 2/10), a 6px album corner and a 12px album pick line (the brand keeps radius to dialogs, toasts and notebooks), a 17px postmark centre (brand 21px), and hand labels and notes below brand sizes. New surfaces use the brand values."
+    ]
+  }
+}
