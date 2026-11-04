@@ -6,8 +6,8 @@ export type AnalyticsEvent =
   | 'waitlist_cta_click'
   | 'waitlist_form_unavailable'
   | 'waitlist_signup_confirmed'
-  | 'postcard_moment_open'
-  | 'postcard_view_change'
+  | 'letter_side_change'
+  | 'album_day_open'
 
 declare global {
   interface Window {
