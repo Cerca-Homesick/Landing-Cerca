@@ -1321,12 +1321,12 @@ body::after {
   max-width: 62ch;
 }
 
-/* ───────── Lista de espera (Jotform) ───────── */
+/* ───────── Lista de espera (Tally sobre papel beige) ───────── */
 .waitlist {
   width: min(560px, 100% - 32px);
-  height: min(780px, 100dvh - 32px);
+  height: auto;
   max-width: none;
-  max-height: none;
+  max-height: calc(100dvh - 32px);
   margin: auto;
   padding: 0;
   border: 0;
@@ -1334,7 +1334,7 @@ body::after {
   background: var(--beige);
   color: var(--ink);
   box-shadow: var(--shadow-2);
-  overflow: hidden;
+  overflow: auto;
   transition: opacity 300ms ease-out, translate 300ms var(--ease-out);
 }
 .waitlist[open] {
@@ -1349,15 +1349,18 @@ body::after {
 .waitlist__sheet {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 .waitlist__header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
   padding: 14px 14px 14px 22px;
   border-bottom: 1px solid var(--divider);
+  background: var(--beige);
 }
 .waitlist__title {
   font-family: var(--display);
@@ -1372,17 +1375,16 @@ body::after {
 }
 .waitlist__frame {
   position: relative;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
+  min-height: 240px;
+  background: var(--beige);
 }
 .waitlist__frame iframe {
   position: relative;
   z-index: 1;
   display: block;
   width: 100%;
-  height: 100%;
   border: 0;
+  background: transparent;
 }
 .waitlist__loading {
   position: absolute;
@@ -1414,7 +1416,7 @@ body::after {
 @media (width <= 600px) {
   .waitlist {
     width: 100%;
-    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
   }
 }

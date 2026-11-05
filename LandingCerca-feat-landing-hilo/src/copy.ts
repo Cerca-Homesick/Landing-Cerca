@@ -96,7 +96,7 @@ const es = {
     close: 'Cerrar la lista de espera',
     loading: 'Cargando el formulario…',
     frameTitle: `Formulario de la lista de espera de ${BRAND_NAME}`,
-    // Temporal: borrar (dejar en '') cuando el formulario de Jotform esté en español.
+    // Temporal: borrar (dejar en '') cuando el formulario de Tally esté en español.
     formNote: 'Por ahora, el formulario está en inglés.',
     altQuestion: '¿No se ve bien?',
     altLink: 'Abre el formulario en una pestaña nueva',
