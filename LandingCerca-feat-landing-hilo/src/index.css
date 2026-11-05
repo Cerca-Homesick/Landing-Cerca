@@ -1376,6 +1376,7 @@ body::after {
 .waitlist__frame {
   position: relative;
   min-height: 240px;
+  padding: 12px 18px 4px;
   background: var(--beige);
 }
 .waitlist__frame iframe {
@@ -1418,6 +1419,21 @@ body::after {
     width: 100%;
     max-height: 100dvh;
     border-radius: 0;
+  }
+  .waitlist__title {
+    font-size: 1.2rem;
+  }
+}
+@media (height <= 500px) {
+  .waitlist {
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .waitlist__header {
+    padding-block: 6px;
+  }
+  .waitlist__title {
+    font-size: 1.15rem;
   }
 }
 

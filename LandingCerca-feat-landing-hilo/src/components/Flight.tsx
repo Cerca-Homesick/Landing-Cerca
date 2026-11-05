@@ -194,19 +194,29 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
       const flightW = Math.round(Math.max(210, Math.min(window.innerWidth * 0.26, 340)))
       root!.style.setProperty('--cw', `${flightW}px`)
 
-      // Lejos del texto: en escritorio del lado libre; en teléfono, pegada a los bordes.
-      const sideX = (side: string | undefined) =>
-        narrow ? (side === 'left' ? w * 0.93 : w * 0.07) : side === 'left' ? innerRight - flightW / 2 : innerLeft + flightW / 2
+      // Lejos del texto: en escritorio, el carril libre; en teléfono, el margen
+      // justo por fuera de la escena, no encima de ella.
+      const sideX = (side: string | undefined, edge: { left: number; right: number }) =>
+        narrow
+          ? side === 'left'
+            ? Math.min(w - 10, edge.right + 12)
+            : Math.max(10, edge.left - 12)
+          : side === 'left'
+            ? innerRight - flightW / 2
+            : innerLeft + flightW / 2
 
       // Un tramo recto junto a cada escena y el cambio de lado solo en el aire
       // entre una y otra. Así la curva no entra en la carta ni en el sobre.
       const points: Point[] = []
       pushDown(points, sign.x, sign.y)
+      // En escritorio el arco llega por la izquierda: baja en vertical antes de
+      // girar para no volver sobre él. En teléfono llega por la derecha.
+      if (!narrow) pushDown(points, sign.x, sign.y + 88)
       pushDown(points, home.x, home.y)
       for (const el of root!.querySelectorAll<HTMLElement>('[data-scene]')) {
         const body = el.querySelector('.scene__body') ?? el
         const r = body.getBoundingClientRect()
-        const x = sideX(el.dataset.scene)
+        const x = sideX(el.dataset.scene, { left: r.left - box.left, right: r.right - box.left })
         pushDown(points, x, r.top - box.top - 12)
         pushDown(points, x, r.bottom - box.top + 12)
       }
@@ -218,13 +228,40 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
       pushDown(points, arrival.x, arrival.y)
 
       routeRef.current!.setAttribute('d', fallingCurve(points))
-      // Del origen al nodo, por el cielo: el control de antes bajaba hasta el
-      // sobre y la ruta se cruzaba consigo misma.
-      const lift = Math.min(64, Math.abs(sign.y - origin.y) * 0.28)
-      arcRef.current!.setAttribute(
-        'd',
-        `M${origin.x} ${origin.y} Q${(origin.x + sign.x) / 2} ${Math.min(origin.y, sign.y) - lift} ${sign.x} ${sign.y}`,
-      )
+      // Del pin de origen al nodo por el margen izquierdo y luego por el aire,
+      // nunca por debajo del sobre: ahí la cruzaría la ruta que sale de él.
+      // En escritorio pasa por encima del título; en teléfono, entre el
+      // título y el sobre.
+      const text = root!.querySelector('.hero__text')?.getBoundingClientRect()
+      const tag = root!.querySelector('.hero__to')?.getBoundingClientRect()
+      const textLeft = text ? text.left - box.left : origin.x
+      const textTop = text ? text.top - box.top : sign.y
+      const textBottom = text ? text.bottom - box.top : origin.y
+      const tagTop = tag ? tag.top - box.top : sign.y
+      const tagRight = tag ? tag.right - box.left : sign.x
+      const gutterX = narrow ? Math.max(6, Math.min(origin.x - 24, textLeft - 8)) : Math.max(12, textLeft - 36)
+      const skyY = narrow ? Math.min(textBottom + 28, tagTop - 14, sign.y - 40) : Math.min(sign.y, textTop - 28)
+      const radius = narrow ? 14 : 72
+      const lowY = narrow ? origin.y - radius : Math.min(origin.y, textBottom + 40)
+      const arc = [
+        `M${origin.x} ${origin.y}`,
+        `Q${gutterX} ${origin.y} ${gutterX} ${lowY}`,
+        `L${gutterX} ${skyY + radius}`,
+        `A${radius} ${radius} 0 0 1 ${gutterX + radius} ${skyY}`,
+      ]
+      if (narrow) {
+        // Por encima de la etiqueta de destino, baja por su derecha y entra al
+        // nodo de lado: la ruta sale de él hacia el sobre, abajo a la izquierda.
+        const laneX = Math.min(w - 6, tagRight + 12)
+        arc.push(
+          `L${laneX - radius} ${skyY}`,
+          `A${radius} ${radius} 0 0 1 ${laneX} ${skyY + radius}`,
+          `L${laneX} ${sign.y - radius}`,
+          `A${radius} ${radius} 0 0 1 ${laneX - radius} ${sign.y}`,
+        )
+      }
+      arc.push(`L${sign.x} ${sign.y}`)
+      arcRef.current!.setAttribute('d', arc.join(' '))
       svgRef.current!.setAttribute('height', `${root!.offsetHeight}`)
       svgRef.current!.setAttribute('viewBox', `0 0 ${w} ${root!.offsetHeight}`)
 
