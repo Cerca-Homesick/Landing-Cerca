@@ -494,6 +494,7 @@ body::after {
 .pigeon {
   width: 100%;
   height: auto;
+  aspect-ratio: 1; /* Ocupa su lugar antes de cargar. */
 }
 
 /* ───────── Un solo cielo ─────────
@@ -586,13 +587,22 @@ body::after {
   bottom: 74%;
   width: 52%;
 }
-/* Teléfono: sin carril libre, el sobre va en la página y vuela de hueco en hueco. */
+/* Teléfono: sin carril libre. Posado va en la página; en vuelo, `Flight` lo fija a la ventana. */
 @media (width < 900px) {
   .carrier {
     position: absolute;
-    will-change: auto;
-    transition: transform 0.9s var(--ease-in-out);
   }
+}
+/* Altura visible más chica de la ventana, para medirla sin que la barra del navegador la mueva. */
+.svh-probe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100vh;
+  height: 100svh;
+  visibility: hidden;
+  pointer-events: none;
 }
 .park {
   display: none;

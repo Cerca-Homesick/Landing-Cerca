@@ -9,19 +9,41 @@ import { Pigeon } from './Pigeon'
  *   [data-home], cada [data-scene] y [data-arrival].
  * - En escritorio el sobre se queda a la misma altura de la ventana, sigue la ruta
  *   del lado contrario al contenido y se inclina con ella. En pantallas angostas no
- *   hay carril libre: vuela de un hueco reservado ([data-park]) al siguiente.
+ *   hay carril libre: se posa en cada hueco reservado ([data-park]) y, entre uno y
+ *   otro, vuela chiquita en la esquina de la ventana. Todo depende solo del scroll.
  * - [data-fill] y [data-send] viajan físicamente al sobre; [data-open] lo abre,
  *   [data-seal] lo cierra y [data-landed] lo entrega.
  * - Con "reducir movimiento" no vuela: se queda en el inicio.
  */
 const NARROW = 900
 const MAX_BANK = 12
+/** Teléfono: margen con el borde de la ventana mientras vuela. */
+const EDGE = 12
+/** Teléfono: tramo de scroll (en alturas de ventana) que dura el despegue y el descenso. */
+const LIFT = 0.3
+const DIVE = 0.5
+
+type Box = { x: number; y: number; w: number; h: number }
+/** Una parada del sobre en teléfono: centro en la página, tamaño y altura de la ventana a la que se posa. */
+type Stop = { x: number; y: number; scale: number; dock: number; el: Element }
 
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+const ease = (t: number) => t * t * (3 - 2 * t)
+
+/** Caja de `el` dentro de `root` sin contar transformaciones: no cambia mientras algo viaja. */
+function boxIn(el: HTMLElement, root: HTMLElement): Box {
+  let x = 0
+  let y = 0
+  for (let n: HTMLElement | null = el; n && n !== root; n = n.offsetParent as HTMLElement | null) {
+    x += n.offsetLeft
+    y += n.offsetTop
+  }
+  return { x, y, w: el.offsetWidth, h: el.offsetHeight }
+}
 
 /** Lleva `el` hasta el sobre y lo deja ahí; al subir de nuevo, lo devuelve. */
-function travel(el: HTMLElement, sent: boolean, target: DOMRect, trips: Map<HTMLElement, Animation>) {
+function travel(el: HTMLElement, sent: boolean, to: () => DOMRect, trips: Map<HTMLElement, Animation>) {
   const trip = trips.get(el)
   if (Boolean(trip && trip.playbackRate > 0) === sent) return
   if (!sent) {
@@ -30,6 +52,7 @@ function travel(el: HTMLElement, sent: boolean, target: DOMRect, trips: Map<HTML
   }
   // De vuelta en la página, un viaje nuevo: el sobre ya está en otro lugar.
   trip?.cancel()
+  const target = to()
   const r = el.getBoundingClientRect()
   const dx = target.left + target.width / 2 - (r.left + r.width / 2)
   const dy = target.top + target.height / 2 - (r.top + r.height / 2)
@@ -53,7 +76,30 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
   const routeRef = useRef<SVGPathElement>(null)
   const carrierRef = useRef<HTMLDivElement>(null)
   const trips = useRef(new Map<HTMLElement, Animation>())
-  const m = useRef({ homeX: 0, homeY: 0, homeW: 1, flightW: 1, top: 0, ys: [] as number[], xs: [] as number[] })
+  const probeRef = useRef<HTMLDivElement>(null)
+  const m = useRef({
+    homeX: 0,
+    homeY: 0,
+    homeW: 1,
+    flightW: 1,
+    top: 0,
+    left: 0,
+    h: 0,
+    svh: 0,
+    above: 0,
+    flyScale: 1,
+    flyX: 0,
+    ys: [] as number[],
+    xs: [] as number[],
+    stops: [] as Stop[],
+    fills: [] as { el: HTMLElement; box: Box }[],
+    letter: null as { el: HTMLElement; box: Box } | null,
+    open: null as Box | null,
+    seal: null as Box | null,
+    landed: null as Box | null,
+  })
+  /** Lo último que se escribió en el DOM, para no repetirlo en cada cuadro. */
+  const drawn = useRef({ position: '', land: -1 })
 
   function xAt(y: number) {
     const { ys, xs } = m.current
@@ -71,68 +117,106 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
     const root = rootRef.current
     const carrier = carrierRef.current
     if (!root || !carrier || !m.current.ys.length) return
-    const { homeX, homeY, homeW, flightW, top } = m.current
+    const { homeX, homeY, homeW, flightW, top, left, h, above, flyScale, flyX, stops } = m.current
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const narrow = window.innerWidth < NARROW
-    const vh = window.innerHeight
+    const phone = narrow && !reduce && stops.length > 1
+    // En teléfono la barra del navegador cambia la altura visible: se usa la más chica, que no brinca.
+    const vh = phone ? m.current.svh : window.innerHeight
     const scroll = reduce ? 0 : window.scrollY
-    const h = carrier.offsetHeight
     const line = narrow ? vh * 0.55 : homeY
 
     let x = homeX
-    let y = homeY - top // Coordenadas de la página: en teléfono y con "reducir movimiento".
+    let y = homeY - top // Coordenadas de la página: posada en teléfono y con "reducir movimiento".
     let scale = 1
     let bank = 0
-    let park: DOMRect | null = null
-    if (narrow && !reduce) {
-      // El último hueco que ya entró a la ventana.
-      for (const el of root.querySelectorAll('[data-park]')) {
-        const r = el.getBoundingClientRect()
-        if (r.top < vh * 0.8) park = r
+    let position = ''
+    let at = 0 // Teléfono: última parada a la que ya llegó.
+    let land = 0 // Teléfono: 0 en vuelo → 1 posada en el destino.
+    if (phone) {
+      const seen = (s: Stop) => s.y + top - scroll
+      for (let i = 1; i < stops.length; i++) if (seen(stops[i]) <= stops[i].dock * vh) at = i
+      const cur = stops[at]
+      const next = stops[at + 1] as Stop | undefined
+      const v = seen(cur)
+      // Lo más arriba que puede ir el centro del sobre sin que la paloma se salga de la ventana.
+      const ceiling = (s: number) => EDGE + s * (h / 2 + above)
+      // Posada sube con la página; al tocar el techo despega: se encoge y se va a la esquina.
+      const out = next ? ease(clamp01((ceiling(cur.scale) - v) / (vh * LIFT))) : 0
+      let s = lerp(cur.scale, flyScale, out)
+      let vx = lerp(cur.x, flyX, out)
+      let vy = next ? Math.max(v, ceiling(s)) : v
+      let dive = 0
+      if (next) {
+        // La siguiente parada viene subiendo: baja a encontrarla y se posa.
+        const vn = seen(next)
+        const span = vh * DIVE
+        dive = ease(clamp01((next.dock * vh + span - vn) / span))
+        vx = lerp(vx, next.x, dive)
+        vy = lerp(vy, vn, dive)
+        // A medio camino va chiquita: pasa por encima del contenido sin taparlo.
+        s = lerp(lerp(s, next.scale, dive), flyScale, 0.6 * Math.sin(Math.PI * dive))
+        if (at + 1 === stops.length - 1) land = dive
+      } else {
+        land = 1
       }
-      if (park) {
-        const box = root.getBoundingClientRect()
-        x = park.left + park.width / 2 - box.left
-        y = park.top + park.height * 0.62 - box.top
-        scale = (park.height * 0.92) / (homeW * 1.22)
+      scale = s
+      if (out > 0 || dive > 0) {
+        // En vuelo va fija a la ventana; posada va en la página y el scroll la mueve solo.
+        position = 'fixed'
+        x = vx + left
+        y = vy
+      } else {
+        position = 'absolute'
+        x = cur.x
+        y = cur.y
       }
-    } else if (!reduce) {
+    } else if (!reduce && !narrow) {
       y = homeY
-      const at = scroll + homeY - top
-      x = xAt(at)
+      const here = scroll + homeY - top
+      x = xAt(here)
       scale = lerp(1, flightW / homeW, clamp01(scroll / (vh * 0.5)))
-      const slope = (xAt(at + 40) - xAt(at - 40)) / 80
+      const slope = (xAt(here + 40) - xAt(here - 40)) / 80
       bank = Math.max(-MAX_BANK, Math.min(MAX_BANK, (Math.atan(slope) * 180) / Math.PI / 3))
     }
+    if (drawn.current.position !== position) {
+      drawn.current.position = position
+      carrier.style.position = position
+    }
     carrier.style.transform = `translate(${x - homeW / 2}px, ${y - h / 2}px) scale(${scale}) rotate(${bank}deg)`
+    const landStep = Math.round(land * 200) / 200
+    if (drawn.current.land !== landStep) {
+      drawn.current.land = landStep
+      carrier.style.setProperty('--land', `${landStep}`)
+    }
 
     if (reduce) return
-    const passed = (el: Element | null, offset = 0) => {
-      if (!el) return false
-      const r = el.getBoundingClientRect()
-      return r.top + r.height / 2 + offset < line
-    }
+    const seenTop = (b: Box) => b.y + top - scroll
+    const passed = (b: Box | null, offset = 0) => Boolean(b) && seenTop(b!) + b!.h / 2 + offset < line
     const envelope = carrier.querySelector<HTMLElement>('.env')!
-    const target = park ?? envelope.getBoundingClientRect()
+    // En teléfono lo que viaja va al hueco donde está posado el sobre, que no se mueve en la página.
+    const target = () => (phone ? stops[at].el : envelope).getBoundingClientRect()
     // Una por una: cada estampilla sale un poco después que la anterior.
-    const fills = [...root.querySelectorAll<HTMLElement>('[data-fill]')]
     // En teléfono esperan a estar arriba: hasta entonces se ven junto con el sobre.
-    const fillShift = narrow ? vh * 0.2 : -60
-    const sent = fills.map((li, i) => passed(li, (i - 1) * 70 + fillShift))
-    fills.forEach((li, i) => travel(li, sent[i], target, trips.current))
-    const letter = root.querySelector<HTMLElement>('[data-send]')
+    const fillShift = narrow ? vh * 0.3 : -60
+    const fillStep = narrow ? 60 : 70
+    const sent = m.current.fills.map(({ box }, i) => (!phone || at >= 1) && passed(box, (i - 1) * fillStep + fillShift))
+    m.current.fills.forEach(({ el }, i) => travel(el, sent[i], target, trips.current))
+    const letter = m.current.letter
     if (letter) {
-      const r = letter.getBoundingClientRect()
       // Se dobla cuando ya casi salió de la vista, no mientras alguien la lee.
-      travel(letter, r.bottom < (narrow ? vh * 0.3 : line - 100), target, trips.current)
+      const gone = seenTop(letter.box) + letter.box.h < (narrow ? vh * 0.3 : line - 100)
+      travel(letter.el, (!phone || at >= 2) && gone, target, trips.current)
     }
-    const sealed = passed(root.querySelector('[data-seal]'))
-    const opened = root.querySelector('[data-open]')
-    const isOpen = Boolean(opened && opened.getBoundingClientRect().top < line) && !sealed
-    envelope.dataset.state = isOpen ? 'open' : 'closed'
-    envelope.dataset.stamps = `${sent.filter(Boolean).length}`
-    const landed = root.querySelector('[data-landed]')!.getBoundingClientRect()
-    root.dataset.arrived = `${landed.top + landed.height * 0.4 < line}`
+    const sealed = passed(m.current.seal)
+    const isOpen = Boolean(m.current.open && seenTop(m.current.open) < line) && !sealed
+    const state = isOpen ? 'open' : 'closed'
+    if (envelope.dataset.state !== state) envelope.dataset.state = state
+    const stamps = `${sent.filter(Boolean).length}`
+    if (envelope.dataset.stamps !== stamps) envelope.dataset.stamps = stamps
+    const landed = m.current.landed
+    const arrived = `${phone ? at === stops.length - 1 : Boolean(landed) && seenTop(landed!) + landed!.h * 0.4 < line}`
+    if (root.dataset.arrived !== arrived) root.dataset.arrived = arrived
   }
 
   useScrollFrame(place)
@@ -213,14 +297,58 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
       const carrier = carrierRef.current!
       carrier.style.width = `${home.w}px`
       const top = box.top + window.scrollY
+      const h = carrier.offsetHeight
+
+      // Teléfono: paradas del sobre (inicio, cada hueco y el destino) y tamaño en vuelo.
+      const stops: Stop[] = []
+      const pigeon = carrier.querySelector<HTMLElement>('.carrier__pigeon')!
+      const landedEl = root!.querySelector<HTMLElement>('[data-landed]')
+      const landed = landedEl && boxIn(landedEl, root!)
+      if (narrow && landedEl && landed) {
+        stops.push({ x: home.x, y: home.y, scale: 1, dock: 0, el: carrier })
+        for (const el of root!.querySelectorAll<HTMLElement>('[data-park]')) {
+          const b = boxIn(el, root!)
+          // Llega cuando el hueco apenas entra: lo que viaja al sobre lo encuentra ya ahí.
+          if (b.h) stops.push({ x: b.x + b.w / 2, y: b.y + b.h * 0.62, scale: (b.h * 0.92) / (home.w * 1.22), dock: 0.88, el })
+        }
+        stops.push({ x: landed.x + landed.w / 2, y: landed.y + landed.h / 2, scale: landed.w / home.w, dock: 0.62, el: landedEl })
+
+        // Para posarse igual que la paloma del destino: mismo lugar y tamaño sobre el sobre.
+        const there = landedEl.querySelector<HTMLElement>('.landed__pigeon')
+        if (there) {
+          const k = home.w / landed.w
+          const dx = (there.offsetLeft + there.offsetWidth / 2) * k - (pigeon.offsetLeft + pigeon.offsetWidth / 2)
+          const dy = (there.offsetTop + there.offsetHeight / 2) * k - (pigeon.offsetTop + pigeon.offsetHeight / 2)
+          carrier.style.setProperty('--land-x', `${dx.toFixed(1)}px`)
+          carrier.style.setProperty('--land-y', `${dy.toFixed(1)}px`)
+          carrier.style.setProperty('--land-scale', `${((there.offsetWidth * k) / pigeon.offsetWidth).toFixed(3)}`)
+        }
+      }
+      const flyW = Math.max(76, Math.min(window.innerWidth * 0.23, 100))
+      const one = (selector: string) => {
+        const el = root!.querySelector<HTMLElement>(selector)
+        return el && { el, box: boxIn(el, root!) }
+      }
       m.current = {
         homeX: home.x,
         homeY: home.y + top,
         homeW: home.w,
         flightW,
         top,
+        left: box.left + window.scrollX,
+        h,
+        svh: probeRef.current?.offsetHeight || window.innerHeight,
+        above: Math.max(0, -pigeon.offsetTop),
+        flyScale: flyW / home.w,
+        flyX: w - EDGE - flyW * 0.56,
         ys,
         xs,
+        stops,
+        fills: [...root!.querySelectorAll<HTMLElement>('[data-fill]')].map((el) => ({ el, box: boxIn(el, root!) })),
+        letter: one('[data-send]'),
+        open: one('[data-open]')?.box ?? null,
+        seal: one('[data-seal]')?.box ?? null,
+        landed,
       }
       place()
     }
@@ -247,6 +375,7 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
         <path ref={arcRef} className="route-line" />
         <path ref={routeRef} className="route-line" />
       </svg>
+      <div ref={probeRef} className="svh-probe" aria-hidden="true" />
       <div ref={carrierRef} className="carrier" aria-hidden="true">
         <Pigeon pose="flying" className="carrier__pigeon" />
         <Envelope state="closed" />
