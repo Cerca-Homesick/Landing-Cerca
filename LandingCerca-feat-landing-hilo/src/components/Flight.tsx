@@ -297,12 +297,30 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
       // girar para no volver sobre él. En teléfono llega por la derecha.
       if (!narrow) pushDown(points, sign.x, sign.y + 88)
       pushDown(points, home.x, home.y)
-      for (const el of root!.querySelectorAll<HTMLElement>('[data-scene]')) {
-        const body = el.querySelector('.scene__body') ?? el
-        const r = body.getBoundingClientRect()
-        const x = sideX(el.dataset.scene, { left: r.left - box.left, right: r.right - box.left })
-        pushDown(points, x, r.top - box.top - 12)
-        pushDown(points, x, r.bottom - box.top + 12)
+      if (narrow) {
+        // Teléfono: la ruta pasa por cada hueco donde se posa el sobre y, entre
+        // uno y otro, baja por el margen derecho, que es por donde vuela la
+        // paloma. Así el sobre nunca se despega de la ruta.
+        const laneX = Math.round(innerRight + (w - innerRight) / 2)
+        let prev = home
+        for (const el of root!.querySelectorAll<HTMLElement>('[data-park]')) {
+          const r = el.getBoundingClientRect()
+          if (!r.height) continue
+          const park = { x: r.left - box.left + r.width / 2, y: r.top - box.top + r.height / 2 }
+          pushDown(points, laneX, prev.y + prev.h * 0.35 + 72)
+          pushDown(points, laneX, park.y - 120)
+          pushDown(points, park.x, park.y)
+          prev = { ...park, w: r.width, h: r.height }
+        }
+        pushDown(points, laneX, prev.y + prev.h * 0.35 + 72)
+      } else {
+        for (const el of root!.querySelectorAll<HTMLElement>('[data-scene]')) {
+          const body = el.querySelector('.scene__body') ?? el
+          const r = body.getBoundingClientRect()
+          const x = sideX(el.dataset.scene, { left: r.left - box.left, right: r.right - box.left })
+          pushDown(points, x, r.top - box.top - 12)
+          pushDown(points, x, r.bottom - box.top + 12)
+        }
       }
       // Antes del destino la ruta baja en recto hasta encima del sobre que llegó.
       const landedNode = root!.querySelector('[data-landed]')
