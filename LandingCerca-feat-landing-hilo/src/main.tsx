@@ -13,9 +13,9 @@ const confirmed = params.get(SIGNUP_PARAM) === SIGNUP_VALUE
 const root = document.getElementById('root')!
 
 if (confirmed && window.parent !== window) {
-  // Jotform redirigió a esta página dentro del iframe del modal: avisa a la
-  // página principal (mismo origen) y no carga la landing dentro del iframe.
-  // `top` y no `parent`: el formulario vive en un iframe dentro del de la app de Jotform.
+  // El formulario redirigió a esta página dentro del iframe del modal: avisa a
+  // la página principal (mismo origen) y no carga la landing dentro del iframe.
+  // `top` y no `parent`: el formulario puede vivir en un iframe anidado.
   window.top?.postMessage({ type: SIGNUP_MESSAGE }, window.location.origin)
   root.textContent = COPY[detectLang()].signupInFrame
 } else {

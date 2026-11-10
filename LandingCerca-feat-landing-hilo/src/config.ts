@@ -1,14 +1,15 @@
 export { BRAND_NAME } from './brand'
 
 /**
- * Jotform. Por defecto, la app "Cerca Waiting List" (código de inserción oficial:
- * iframe a app.jotform.com/263007192678866?appEmbedded=1). Para cambiarla sin
- * tocar código, define VITE_JOTFORM_URL en `.env` (ver `.env.example`).
- * Si la URL queda vacía o no es https, los botones abren un aviso de
- * "formulario pendiente" en lugar de un registro falso.
+ * Tally. El formulario vive en un iframe dentro del diálogo de la lista de
+ * espera. `transparentBackground` lo deja sobre el papel beige; `dynamicHeight`
+ * ajusta el alto al contenido. Para cambiarlo sin tocar código, define
+ * VITE_TALLY_EMBED_URL en `.env`. Si la URL queda vacía o no es https, los
+ * botones abren un aviso de "formulario pendiente".
  */
-const DEFAULT_JOTFORM_URL = 'https://app.jotform.com/263007192678866?appEmbedded=1'
-const rawJotformUrl = (import.meta.env.VITE_JOTFORM_URL || DEFAULT_JOTFORM_URL).trim()
+const DEFAULT_TALLY_EMBED_URL =
+  'https://tally.so/embed/GeKvlz?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1'
+const rawTallyUrl = (import.meta.env.VITE_TALLY_EMBED_URL || DEFAULT_TALLY_EMBED_URL).trim()
 
 function validFormUrl(value: string): string | null {
   if (!value) return null
@@ -20,22 +21,28 @@ function validFormUrl(value: string): string | null {
   }
 }
 
-/** URL para el iframe del modal. */
-export const JOTFORM_URL = validFormUrl(rawJotformUrl)
+/** URL del iframe (`data-tally-src`). El widget de Tally le pone `src`. */
+export const TALLY_EMBED_URL = validFormUrl(rawTallyUrl)
 
-/** Enlace directo (pestaña nueva), sin el parámetro de inserción. */
-export const JOTFORM_DIRECT_URL = (() => {
-  if (!JOTFORM_URL) return null
-  const url = new URL(JOTFORM_URL)
-  url.searchParams.delete('appEmbedded')
+/** Formulario público, para abrirlo en una pestaña nueva. */
+export const TALLY_DIRECT_URL = (() => {
+  if (!TALLY_EMBED_URL) return null
+  const url = new URL(TALLY_EMBED_URL)
+  url.pathname = url.pathname.replace(/^\/embed\//, '/r/')
+  for (const key of ['alignLeft', 'hideTitle', 'transparentBackground', 'dynamicHeight']) {
+    url.searchParams.delete(key)
+  }
   return url.toString()
 })()
 
+export const TALLY_ORIGIN = 'https://tally.so'
+export const TALLY_WIDGET_SRC = 'https://tally.so/widgets/embed.js'
+
 /**
- * Inscripción confirmada. En Jotform: Configuración → Página de agradecimiento →
- * "Redirigir a una URL externa" con la URL de esta página más
- * `?registro=confirmado`. Solo esa redirección (que ocurre tras enviar el
- * formulario) registra la conversión; un clic en el botón no cuenta como tal.
+ * Inscripción confirmada desde una pestaña nueva. En Tally: el mensaje de
+ * agradecimiento puede redirigir a esta página más `?registro=confirmado`.
+ * Dentro del modal, la confirmación llega por el evento `Tally.FormSubmitted`
+ * y no depende de esa redirección.
  */
 export const SIGNUP_PARAM = 'registro'
 export const SIGNUP_VALUE = 'confirmado'

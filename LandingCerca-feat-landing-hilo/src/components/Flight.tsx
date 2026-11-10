@@ -42,6 +42,34 @@ function boxIn(el: HTMLElement, root: HTMLElement): Box {
   return { x, y, w: el.offsetWidth, h: el.offsetHeight }
 }
 
+type Point = { x: number; y: number }
+
+/**
+ * Une puntos que siempre bajan. Las asas se quedan dentro del rectángulo
+ * entre cada par, así el giro es continuo y no se cruza con el tramo anterior.
+ */
+function fallingCurve(points: Point[]) {
+  const commands = [`M${points[0].x} ${points[0].y}`]
+  for (let index = 0; index < points.length - 1; index++) {
+    const from = points[index]
+    const to = points[index + 1]
+    const drop = Math.max(1, to.y - from.y)
+    const shift = to.x - from.x
+    const handle = drop * 0.46
+    const pull = Math.sign(shift) * Math.min(Math.abs(shift) * 0.22, drop * 0.32)
+    commands.push(`C${from.x + pull} ${from.y + handle} ${to.x - pull} ${to.y - handle} ${to.x} ${to.y}`)
+  }
+  return commands.join(' ')
+}
+
+/** Añade un punto debajo del anterior. Una caída mínima evita un codo de altura cero. */
+function pushDown(points: Point[], x: number, y: number) {
+  const last = points[points.length - 1]
+  const nextY = last ? Math.max(y, last.y + 32) : y
+  if (last && Math.abs(last.x - x) < 0.5 && nextY - last.y < 1) return
+  points.push({ x, y: nextY })
+}
+
 /** Lleva `el` hasta el sobre y lo deja ahí; al subir de nuevo, lo devuelve. */
 function travel(el: HTMLElement, sent: boolean, to: () => DOMRect, trips: Map<HTMLElement, Animation>) {
   const trip = trips.get(el)
@@ -250,36 +278,74 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
       const flightW = Math.round(Math.max(210, Math.min(window.innerWidth * 0.26, 340)))
       root!.style.setProperty('--cw', `${flightW}px`)
 
-      // Lejos del texto: en escritorio del lado libre; en teléfono, pegada a los bordes.
-      const sideX = (side: string | undefined) =>
-        narrow ? (side === 'left' ? w * 0.93 : w * 0.07) : side === 'left' ? innerRight - flightW / 2 : innerLeft + flightW / 2
+      // Lejos del texto: en escritorio, el carril libre; en teléfono, el margen
+      // justo por fuera de la escena, no encima de ella.
+      const sideX = (side: string | undefined, edge: { left: number; right: number }) =>
+        narrow
+          ? side === 'left'
+            ? Math.min(w - 10, edge.right + 12)
+            : Math.max(10, edge.left - 12)
+          : side === 'left'
+            ? innerRight - flightW / 2
+            : innerLeft + flightW / 2
 
-      const points = [
-        { x: sign.x, y: sign.y },
-        { x: home.x, y: home.y },
-      ]
+      // Un tramo recto junto a cada escena y el cambio de lado solo en el aire
+      // entre una y otra. Así la curva no entra en la carta ni en el sobre.
+      const points: Point[] = []
+      pushDown(points, sign.x, sign.y)
+      // En escritorio el arco llega por la izquierda: baja en vertical antes de
+      // girar para no volver sobre él. En teléfono llega por la derecha.
+      if (!narrow) pushDown(points, sign.x, sign.y + 88)
+      pushDown(points, home.x, home.y)
       for (const el of root!.querySelectorAll<HTMLElement>('[data-scene]')) {
-        const r = el.getBoundingClientRect()
-        const x = sideX(el.dataset.scene)
-        // Cruza de un lado a otro en el aire entre escenas, nunca sobre el contenido.
-        // En teléfono entra más en la escena (por detrás) para que el barrido no quede en ángulo.
-        const air = Math.min(parseFloat(getComputedStyle(el).paddingTop) * (narrow ? 1.7 : 1), r.height / 4)
-        // Barridos largos en vez de columnas rectas: entra y sale un poco ladeada.
-        const sway = flightW * (narrow ? 0.03 : 0.12)
-        points.push({ x: x - sway, y: r.top - box.top + air }, { x: x + sway, y: r.bottom - box.top - air })
+        const body = el.querySelector('.scene__body') ?? el
+        const r = body.getBoundingClientRect()
+        const x = sideX(el.dataset.scene, { left: r.left - box.left, right: r.right - box.left })
+        pushDown(points, x, r.top - box.top - 12)
+        pushDown(points, x, r.bottom - box.top + 12)
       }
-      points.push({ x: arrival.x, y: arrival.y })
+      const landed = root!.querySelector('[data-landed]')
+      if (landed) {
+        const r = landed.getBoundingClientRect()
+        pushDown(points, arrival.x, r.top - box.top - 36)
+      }
+      pushDown(points, arrival.x, arrival.y)
 
-      const curves = points.slice(1).map((b, i) => {
-        const a = points[i]
-        const midY = (a.y + b.y) / 2
-        return `C${a.x} ${midY} ${b.x} ${midY} ${b.x} ${b.y}`
-      })
-      routeRef.current!.setAttribute('d', [`M${points[0].x} ${points[0].y}`, ...curves].join(' '))
-      arcRef.current!.setAttribute(
-        'd',
-        `M${origin.x} ${origin.y} C${origin.x + w * 0.34} ${origin.y + 30} ${sign.x - w * 0.16} ${sign.y + home.h * 0.5} ${sign.x} ${sign.y}`,
-      )
+      routeRef.current!.setAttribute('d', fallingCurve(points))
+      // Del pin de origen al nodo por el margen izquierdo y luego por el aire,
+      // nunca por debajo del sobre: ahí la cruzaría la ruta que sale de él.
+      // En escritorio pasa por encima del título; en teléfono, entre el
+      // título y el sobre.
+      const text = root!.querySelector('.hero__text')?.getBoundingClientRect()
+      const tag = root!.querySelector('.hero__to')?.getBoundingClientRect()
+      const textLeft = text ? text.left - box.left : origin.x
+      const textTop = text ? text.top - box.top : sign.y
+      const textBottom = text ? text.bottom - box.top : origin.y
+      const tagTop = tag ? tag.top - box.top : sign.y
+      const tagRight = tag ? tag.right - box.left : sign.x
+      const gutterX = narrow ? Math.max(6, Math.min(origin.x - 24, textLeft - 8)) : Math.max(12, textLeft - 36)
+      const skyY = narrow ? Math.min(textBottom + 28, tagTop - 14, sign.y - 40) : Math.min(sign.y, textTop - 28)
+      const radius = narrow ? 14 : 72
+      const lowY = narrow ? origin.y - radius : Math.min(origin.y, textBottom + 40)
+      const arc = [
+        `M${origin.x} ${origin.y}`,
+        `Q${gutterX} ${origin.y} ${gutterX} ${lowY}`,
+        `L${gutterX} ${skyY + radius}`,
+        `A${radius} ${radius} 0 0 1 ${gutterX + radius} ${skyY}`,
+      ]
+      if (narrow) {
+        // Por encima de la etiqueta de destino, baja por su derecha y entra al
+        // nodo de lado: la ruta sale de él hacia el sobre, abajo a la izquierda.
+        const laneX = Math.min(w - 6, tagRight + 12)
+        arc.push(
+          `L${laneX - radius} ${skyY}`,
+          `A${radius} ${radius} 0 0 1 ${laneX} ${skyY + radius}`,
+          `L${laneX} ${sign.y - radius}`,
+          `A${radius} ${radius} 0 0 1 ${laneX - radius} ${sign.y}`,
+        )
+      }
+      arc.push(`L${sign.x} ${sign.y}`)
+      arcRef.current!.setAttribute('d', arc.join(' '))
       svgRef.current!.setAttribute('height', `${root!.offsetHeight}`)
       svgRef.current!.setAttribute('viewBox', `0 0 ${w} ${root!.offsetHeight}`)
 
@@ -290,6 +356,7 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
       const xs: number[] = []
       for (let l = 0; l <= length; l += 8) {
         const p = route.getPointAtLength(l)
+        if (ys.length && p.y < ys[ys.length - 1]) continue
         ys.push(p.y)
         xs.push(p.x)
       }
