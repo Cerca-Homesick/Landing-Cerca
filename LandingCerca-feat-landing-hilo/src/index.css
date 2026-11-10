@@ -577,8 +577,10 @@ body::after {
   pointer-events: none;
   will-change: transform;
 }
+/* `--land` (0 → 1) lo pone `Flight` al bajar al destino: el sobre se endereza y la paloma
+   se acomoda donde está la que ya llegó, para que el relevo no se note. */
 .carrier .env {
-  rotate: -6deg;
+  rotate: calc(-6deg * (1 - var(--land, 0)));
 }
 .carrier__pigeon {
   position: absolute;
@@ -586,6 +588,8 @@ body::after {
   left: 34%;
   bottom: 74%;
   width: 52%;
+  translate: calc(var(--land, 0) * var(--land-x, 0px)) calc(var(--land, 0) * var(--land-y, 0px));
+  scale: calc(1 + var(--land, 0) * (var(--land-scale, 1) - 1));
 }
 /* Teléfono: sin carril libre. Posado va en la página; en vuelo, `Flight` lo fija a la ventana. */
 @media (width < 900px) {
@@ -1087,6 +1091,23 @@ body::after {
 }
 .journey[data-arrived='true'] .carrier {
   visibility: hidden;
+}
+/* Teléfono: el sobre aterriza justo encima del que llegó y se desvanece sobre él. */
+@media (width < 900px) and (prefers-reduced-motion: no-preference) {
+  .carrier {
+    transition: opacity 0.25s ease-out;
+  }
+  .journey[data-arrived='true'] .carrier {
+    opacity: 0;
+    transition: opacity 0.25s ease-out, visibility 0s 0.25s;
+  }
+  .landed {
+    transition: none;
+  }
+  .journey[data-arrived='false'] .landed {
+    translate: none;
+    transition: opacity 0s 0.25s;
+  }
 }
 .landed__pigeon {
   position: absolute;
