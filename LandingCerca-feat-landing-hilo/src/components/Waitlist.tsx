@@ -42,6 +42,8 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
   const triggerRef = useRef<HTMLElement | null>(null)
   const isOpenRef = useRef(false)
   const signedUpRef = useRef(false)
+  // Medición del formulario (F2): desde qué botón, cuándo se abrió y si llegó a cargar.
+  const visit = useRef({ location: '', openedAt: 0, loaded: false })
   const [isOpen, setIsOpen] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [confirmed, setConfirmed] = useState(initialConfirmed)
@@ -52,6 +54,7 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
     (trigger, location) => {
       triggerRef.current = trigger
       signedUpRef.current = false
+      visit.current = { location, openedAt: performance.now(), loaded: false }
       track('waitlist_cta_click', { location, lang })
       if (!TALLY_EMBED_URL) track('waitlist_form_unavailable', { location, lang })
       isOpenRef.current = true
@@ -62,6 +65,16 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
   )
 
   const close = useCallback(() => dialogRef.current?.close(), [])
+
+  const markLoaded = useCallback(() => {
+    setLoaded(true)
+    if (visit.current.loaded || !visit.current.openedAt) return
+    visit.current.loaded = true
+    track('form_loaded', {
+      location: visit.current.location,
+      ms: Math.round(performance.now() - visit.current.openedAt),
+    })
+  }, [])
 
   const confirmSignup = useCallback(() => {
     if (signedUpRef.current) return
@@ -127,7 +140,7 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
     function onMessage(event: MessageEvent) {
       if (event.origin === TALLY_ORIGIN) {
         if (!isOpenRef.current) return
-        if (isTallyEvent(event.data, 'Tally.FormLoaded')) setLoaded(true)
+        if (isTallyEvent(event.data, 'Tally.FormLoaded')) markLoaded()
         if (isTallyEvent(event.data, 'Tally.FormSubmitted')) confirmSignup()
         return
       }
@@ -137,9 +150,17 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [confirmSignup])
+  }, [confirmSignup, markLoaded])
 
   function onClose() {
+    if (!signedUpRef.current && visit.current.openedAt) {
+      track('form_abandoned', {
+        location: visit.current.location,
+        seconds: Math.round((performance.now() - visit.current.openedAt) / 1000),
+        loaded: visit.current.loaded,
+      })
+    }
+    visit.current.openedAt = 0
     isOpenRef.current = false
     setIsOpen(false)
     setLoaded(false)
@@ -181,7 +202,7 @@ export function WaitlistProvider({ children, initialConfirmed = false }: Provide
                     title={t.frameTitle}
                     width="100%"
                     height="480"
-                    onLoad={() => setLoaded(true)}
+                    onLoad={markLoaded}
                   />
                 )}
               </div>

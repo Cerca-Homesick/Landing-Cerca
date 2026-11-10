@@ -18,7 +18,8 @@ export default defineConfig({
   webServer: BASE_URL
     ? undefined
     : {
-        command: `npm run build && npx vite preview --port ${PORT} --strictPort`,
+        // Clave falsa: PostHog se carga, pero las pruebas responden por él (helpers.ts).
+        command: `VITE_POSTHOG_KEY=phc_e2e_test npm run build && npx vite preview --port ${PORT} --strictPort`,
         url: `http://localhost:${PORT}`,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

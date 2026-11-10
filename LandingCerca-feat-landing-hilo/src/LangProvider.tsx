@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { track } from './analytics'
 import { COPY } from './copy'
 import { detectLang, LANG_PARAM, LANG_STORAGE_KEY, LangContext, type Lang } from './i18n'
 
@@ -19,6 +20,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   // Solo se recuerda lo que la persona eligió; si no, manda el idioma del navegador.
   function choose(next: Lang) {
+    if (next !== lang) track('lang_change', { from: lang, to: next })
     setLang(next)
     try {
       localStorage.setItem(LANG_STORAGE_KEY, next)

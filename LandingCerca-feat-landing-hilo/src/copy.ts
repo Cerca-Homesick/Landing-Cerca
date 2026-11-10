@@ -91,6 +91,15 @@ const es = {
     postmarkCenter: 'AQUÍ',
   },
   footer: 'Una app para iPhone en desarrollo. Personas, lugares, horas e ilustraciones son datos de ejemplo.',
+  privacy: {
+    label: 'Privacidad',
+    text: '¿Nos dejas medir cómo se usa la página? Guardaríamos una cookie de análisis para mejorarla. Si dices que no, solo contamos visitas, sin cookies.',
+    accept: 'Aceptar',
+    decline: 'Rechazar',
+    notice: 'Aviso de privacidad',
+    noticeHref: '/privacidad/',
+    prefs: 'Preferencias de privacidad',
+  },
   waitlist: {
     title: `Lista de espera de ${BRAND_NAME}`,
     close: 'Cerrar la lista de espera',
@@ -204,6 +213,15 @@ const en: Copy = {
     postmarkCenter: 'HERE',
   },
   footer: 'An iPhone app in development. People, places, times and illustrations are sample data.',
+  privacy: {
+    label: 'Privacy',
+    text: 'Can we measure how the page is used? We’d store an analytics cookie to improve it. If you say no, we only count visits, without cookies.',
+    accept: 'Accept',
+    decline: 'Decline',
+    notice: 'Privacy notice',
+    noticeHref: '/privacy/',
+    prefs: 'Privacy preferences',
+  },
   waitlist: {
     title: `${BRAND_NAME} waitlist`,
     close: 'Close the waitlist',

@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { track } from './analytics'
+import { startAnalytics, track, trackWebVitals } from './analytics'
 import { SIGNUP_MESSAGE, SIGNUP_PARAM, SIGNUP_VALUE } from './config'
 import { COPY } from './copy'
 import { detectLang } from './i18n'
@@ -19,6 +19,9 @@ if (confirmed && window.parent !== window) {
   window.top?.postMessage({ type: SIGNUP_MESSAGE }, window.location.origin)
   root.textContent = COPY[detectLang()].signupInFrame
 } else {
+  // Medición (F2): PostHog carga cuando la página ya se pintó; sin clave no hace nada.
+  startAnalytics()
+  void trackWebVitals()
   if (confirmed) {
     // Formulario enviado desde la pestaña nueva.
     track('waitlist_signup_confirmed', { via: 'direct' })
