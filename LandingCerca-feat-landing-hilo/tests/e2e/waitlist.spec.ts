@@ -261,12 +261,32 @@ test.describe('formulario de Tally (simulado)', () => {
 
 test.describe('formulario de Tally en vivo (sin enviar)', () => {
   test.skip(!LIVE, 'solo con LIVE_TALLY=1')
-  test('el formulario real carga dentro del diálogo y tiene campo de correo', async ({ page }) => {
-    // Corta cualquier envío por si acaso: solo se permite cargar.
-    await page.route('https://api.tally.so/**', (route) => route.abort())
+
+  async function openLive(page: Page) {
+    // Nada sale: se corta todo lo que no sea lectura hacia el API de Tally.
+    await page.route('https://api.tally.so/**', (route) =>
+      route.request().method() === 'GET' ? route.continue() : route.abort(),
+    )
     await page.goto('/?lang=es')
     await page.getByRole('button', { name: 'Acércame' }).first().click()
-    await expect(dialog(page).getByText('Cargando el formulario…')).toBeHidden({ timeout: 15_000 })
-    await expect(frame(page).locator('input[type="email"]').first()).toBeVisible({ timeout: 15_000 })
+    await expect(frame(page).locator('input[type="email"]')).toBeVisible({ timeout: 15_000 })
+  }
+
+  test('el formulario real carga dentro del diálogo y tiene campo de correo', async ({ page }) => {
+    await openLive(page)
+    await expect(dialog(page).getByText('Cargando el formulario…')).toBeHidden()
+    await expect(frame(page).locator('input[type="email"]')).toHaveAttribute('autocomplete', 'email')
+  })
+
+  test('el formulario real valida antes de enviar', async ({ page }) => {
+    await openLive(page)
+    const submit = frame(page).getByRole('button', { name: /Join/ })
+    await submit.click()
+    await expect(frame(page).getByRole('alert').first()).toBeVisible()
+    await frame(page).locator('input[type="email"]').fill('sin-arroba')
+    await submit.click()
+    await expect(frame(page).getByText('Please enter a valid email')).toBeVisible()
+    await expect(dialog(page)).toBeVisible()
+    await expect(page.getByText('¡Listo!')).toHaveCount(0)
   })
 })
