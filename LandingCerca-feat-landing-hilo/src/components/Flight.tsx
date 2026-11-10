@@ -304,9 +304,10 @@ export function Flight({ rootRef }: { rootRef: RefObject<HTMLElement | null> }) 
         pushDown(points, x, r.top - box.top - 12)
         pushDown(points, x, r.bottom - box.top + 12)
       }
-      const landed = root!.querySelector('[data-landed]')
-      if (landed) {
-        const r = landed.getBoundingClientRect()
+      // Antes del destino la ruta baja en recto hasta encima del sobre que llegó.
+      const landedNode = root!.querySelector('[data-landed]')
+      if (landedNode) {
+        const r = landedNode.getBoundingClientRect()
         pushDown(points, arrival.x, r.top - box.top - 36)
       }
       pushDown(points, arrival.x, arrival.y)
