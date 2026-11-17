@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["N2TLVFPKL4.com.homesick.Cerca"],
+        "components": [{ "/": "/i/*", "comment": "Invitation links open the app" }]
+      }
+    ]
+  }
+}

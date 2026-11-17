@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4ea5d9" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Te invitaron a Cerca</title>
+    <style>
+      :root { color-scheme: light; }
+      body {
+        margin: 0; min-height: 100vh; display: grid; place-items: center;
+        background: #4ea5d9; color: #1d2b3a;
+        font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      }
+      main {
+        box-sizing: border-box; width: min(100% - 32px, 420px); padding: 28px 24px;
+        background: #fbf6ec; border-radius: 6px; text-align: center;
+        box-shadow: 0 8px 28px rgba(29, 43, 58, 0.25);
+      }
+      h1 { margin: 0 0 8px; font: 600 28px/1.2 Georgia, serif; }
+      p { margin: 0 0 16px; }
+      .code {
+        display: inline-block; margin: 4px 0 20px; padding: 10px 18px;
+        font: 700 30px/1 ui-monospace, Menlo, monospace; letter-spacing: 0.18em;
+        background: #fff; border: 1px dashed #1d2b3a; border-radius: 4px;
+      }
+      .actions { display: grid; gap: 10px; }
+      a.button, button {
+        display: block; padding: 14px 16px; border: 0; border-radius: 999px; cursor: pointer;
+        font: 600 16px/1 inherit; text-decoration: none; text-align: center;
+        background: #1d2b3a; color: #fbf6ec;
+      }
+      button.quiet, a.quiet { background: transparent; color: #1d2b3a; border: 1px solid #1d2b3a; }
+      a:focus-visible, button:focus-visible { outline: 3px solid #e25c3c; outline-offset: 2px; }
+      small { display: block; margin-top: 16px; opacity: 0.75; }
+      [hidden] { display: none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Te invitaron a Cerca</h1>
+      <div id="with-code" hidden>
+        <p>Alguien quiere mandarte las pequeñas cosas de su día. Este es tu código de invitación:</p>
+        <div class="code" id="code" aria-label="Código de invitación"></div>
+        <div class="actions">
+          <a class="button" id="open" href="#">Abrir en Cerca</a>
+          <button class="quiet" id="copy" type="button">Copiar código</button>
+        </div>
+        <small>Si todavía no tienes Cerca, instálala y escribe este código cuando te lo pida.</small>
+      </div>
+      <div id="no-code" hidden>
+        <p>Este enlace de invitación no está completo. Pídele a esa persona que te lo mande otra vez.</p>
+      </div>
+      <p style="margin-top: 20px"><a class="quiet button" href="/">Conocer Cerca</a></p>
+    </main>
+    <script>
+      // The code is the last part of /i/CODE: six letters and digits without 0, O, 1, I or L.
+      var code = location.pathname.split("/").filter(Boolean).pop() || "";
+      code = code.toUpperCase();
+      var valid = /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{6}$/.test(code);
+      document.getElementById(valid ? "with-code" : "no-code").hidden = false;
+      if (valid) {
+        document.getElementById("code").textContent = code;
+        document.getElementById("open").href = "cerca://i/" + code;
+        document.getElementById("copy").addEventListener("click", function (event) {
+          var button = event.currentTarget;
+          (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(
+            function () { button.textContent = "Copiado"; },
+            function () { button.textContent = "Mantén presionado el código para copiarlo"; }
+          );
+        });
+      }
+    </script>
+  </body>
+</html>
